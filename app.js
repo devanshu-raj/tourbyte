@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const cors = require('cors');
 const compression = require('compression');
 const cookieParser = require('cookie-parser');
 
@@ -26,6 +27,10 @@ app.set('views', path.join(__dirname, 'views'));
 // GLOBAL MIDDLEWARES
 // Serving static files
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Implement CORS
+app.use(cors());
+app.options('*', cors());
 
 // Set security HTTP headers
 app.use(helmet({ contentSecurityPolicy: false }));
