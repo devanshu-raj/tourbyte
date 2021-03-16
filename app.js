@@ -11,12 +11,13 @@ const compression = require('compression');
 const cookieParser = require('cookie-parser');
 
 const AppError = require('./utils/appError');
-const globalErrorHandler = require('./controllers/errorController');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const bookingRouter = require('./routes/bookingRoutes');
 const viewRouter = require('./routes/viewRoutes');
+const bookingController = require('./controllers/bookingController');
+const globalErrorHandler = require('./controllers/errorController');
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.options('*', cors());
 
 // Set security HTTP headers
 app.use(helmet({ contentSecurityPolicy: false }));
+
 // Dev logging
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
@@ -45,6 +47,12 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP. Please try again in an hour',
 });
 app.use('/api', limiter);
+
+app.post(
+  '/webhook-checkout',
+  express.raw({ type: 'application/json' }),
+  bookingController.webhookCheckout
+);
 
 // body-parser / cookie parser
 app.use(express.json());
@@ -73,12 +81,6 @@ app.use(
 
 // Compress response
 app.use(compression());
-
-// Test middleware
-app.use((req, res, next) => {
-  req.requestTime = new Date().toISOString();
-  next();
-});
 
 // ROUTES
 app.use('/', viewRouter);
