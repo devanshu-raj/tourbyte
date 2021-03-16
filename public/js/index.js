@@ -1,4 +1,5 @@
 import '@babel/polyfill';
+import { showAlert } from './alerts';
 import { displayMap } from './mapbox';
 import { login, logout } from './login';
 import { updateSettings } from './updateSettings';
@@ -61,3 +62,6 @@ if (bookBtn)
     const { tourId } = ev.target.dataset;
     bookTour(tourId);
   });
+
+const alertMessage = document.querySelector('body').dataset.alert;
+if (alertMessage) showAlert('success', alertMessage, 15);
