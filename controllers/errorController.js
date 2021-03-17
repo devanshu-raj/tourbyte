@@ -52,7 +52,10 @@ const handleCastErrorDB = (err) => {
 };
 
 const handleDuplicateErrorDB = (err) => {
-  return new AppError(`Duplicate field value: ${err.keyValue.name}`, 400);
+  return new AppError(
+    `Duplicate field value: ${err.keyValue.name || err.keyValue.email}`,
+    400
+  );
 };
 
 const handleValidationErrorDB = (err) => {
@@ -77,6 +80,7 @@ module.exports = (err, req, res, next) => {
     let error = { ...err };
     error.message = err.message;
     error.name = err.name;
+    error.keyValue = err.keyValue;
     if (error.name === 'CastError') error = handleCastErrorDB(error);
     if (error.code === 11000) error = handleDuplicateErrorDB(error);
     if (error.name === 'ValidationError')

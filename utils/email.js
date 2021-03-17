@@ -12,12 +12,14 @@ module.exports = class Email {
 
   newTransport() {
     if (process.env.NODE_ENV === 'production') {
-      // Mailgun (for testing purpose only)
+      // SendinBlue Service
       return nodemailer.createTransport({
-        service: 'Mailgun',
+        service: 'SendinBlue',
+        host: process.env.SENDINBLUE_HOST,
+        port: process.env.SENDINBLUE_PORT,
         auth: {
-          user: process.env.MAILGUN_USERNAME,
-          pass: process.env.MAILGUN_PASSWORD,
+          user: process.env.SENDINBLUE_USERNAME,
+          pass: process.env.SENDINBLUE_PASSWORD,
         },
       });
     }
@@ -32,7 +34,7 @@ module.exports = class Email {
     });
   }
 
-  // Send the actual email
+  // Send the email
   async send(template, subject) {
     // 1) Render HTML based on a pug template
     const html = pug.renderFile(`${__dirname}/../views/email/${template}.pug`, {
